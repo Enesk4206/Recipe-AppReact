@@ -1,7 +1,35 @@
-import { Search, Soup } from 'lucide-react'
-import React from 'react'
+import {  Search } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import RecipeCard from '../components/RecipeCard'
 
 const HomePage = () => {
+  const APP_ID = "75fa574a";
+  const APP_KEYS = "60cd1b0f3c92768f8f142ffa5dfd8e30"
+    const [recipes , setRecipes] = useState([]);
+    const [loading , setLoading] = useState(true);
+    
+    
+      const fetchRecipes = async (searchQuery) =>{
+      setLoading(true)
+      setRecipes([])
+      try {
+        const res = await fetch(`https://api.edamam.com/api/recipes/v2/?app_id=${APP_ID}&app_key=${APP_KEYS}&q=${searchQuery}&type=public`)
+        const data = await res.json();
+        
+        setRecipes(data.hits);
+      } catch (error) {
+        console.log(error.message)
+      }
+      finally{
+        setLoading(false);
+      }
+    }
+  
+    useEffect(()=>{
+      fetchRecipes("chicken")
+    },[]);
+  
+
   return (
     <div className='bg-[#faf9fb] p-10 flex-1'>
       <div className='max-w-screen-lg mx-auto'>
@@ -19,15 +47,29 @@ const HomePage = () => {
         </p>
         <div className='grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
           {/* 1st recipe */}
-          <div className='flex flex-col rounded-md bg-[#ecf7d4] overflow-hidden p-3  relative'>
-            <a href="#" className='relative h-32'>
-                <img src="/1.jpg" alt="recipe image" className='rounded-md w-full h-full object-cover cursor-pointer' />
-                <div className='absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm'>
-                    <Soup size={"16"}/> 4 Servings
-                </div>
-            </a>
+          {!loading && recipes.map(({recipe},index)=>(
+            <RecipeCard key={index} recipe={recipe} />
+          ))
             
+          }
+
+
+
+          {loading && [...Array(9)].map((_,index)=>(
+            <div key={index} className="flex w-52 flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
+              <div className="flex flex-col gap-4">
+                <div className="skeleton h-4 w-20"></div>
+                <div className="skeleton h-4 w-28"></div>
+              </div>
+            </div>
+            <div className="skeleton h-32 w-full"></div>
           </div>
+          ))  
+          }
+          
+          
         </div>
         
       </div>
