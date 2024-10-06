@@ -19,21 +19,26 @@ const RecipeCard = ({recipe}) => {
             favorites.push(recipe);
             setIsFavorites(true);
         }
-        localStorage.setItem('favorites',JSON.stringify(favorites))
+        localStorage.setItem("favorites",JSON.stringify(favorites))
     }
   return (
     <div className='flex flex-col rounded-md bg-[#ecf7d4] overflow-hidden p-3  relative'>
-    <a href={`https://www.youtube.com/results?search_query=${recipe.label} recipe`} target='_blank' className='relative h-32'>
+
+        <div className='skeleton absolute inset-0'></div>
+    <a href={`https://www.youtube.com/results?search_query=${recipe.label} recipe`} target='_blank' className='relative h-32' onLoad={(e)=>{
+        e.currentTarget.style.opacity =1;
+        e.currentTarget.previousElementSibling.style.display = "none";
+    }}>
         <img src={recipe.image} alt="recipe image" className='rounded-md w-full h-full object-cover cursor-pointer' />
-        <div className='absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm'>
+        <div className='absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm opacity-0 transition-opacity duration-500'>
             <Soup size={"16"}/> {recipe.yield} Servings
         </div>
         <div className='absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer' onClick={(e) =>{
             e.preventDefault();
-            addRecipeToFavorites()
+            addRecipeToFavorites();
         }}>
             {!isFavorite && <Heart size={20} className='hover:fill-red-500 hover:text-red-500'/>}
-            {isFavorite && <Heart size={20} className='hover:fill-red-500 hover:text-red-500'/>}
+            {isFavorite && <Heart size={20} className='fill-red-500 hover:text-red-500'/>}
         
         </div>
     </a>
